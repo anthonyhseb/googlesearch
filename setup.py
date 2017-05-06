@@ -18,7 +18,7 @@ test_requirements = [
 ]
 
 setup(
-    name='googlesearch',
+    name='google-search',
     version='1.0.0',
     description="Library for scraping google search results",
     long_description=readme + '\n\n' + history,
