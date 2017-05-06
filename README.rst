@@ -20,8 +20,7 @@ google-search
 
 Library for scraping google search results.
 
-Usage:
-.. code-block:: python
+* Usage::
 
     from googlesearch import googlesearch.GoogleSearch
     response = GoogleSearch().search("something")
