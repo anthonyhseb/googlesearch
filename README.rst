@@ -21,6 +21,7 @@ google-search
 Library for scraping google search results.
 
 Usage:
+.. code-block:: python
 
     from googlesearch import googlesearch.GoogleSearch
     response = GoogleSearch().search("something")
@@ -35,7 +36,7 @@ Usage:
 Features
 --------
 
-Run a Google search and fetch the individual results (full HTML and text contents). By default the result URLs are fetched eagerly when the search request is made with 10 parallel requests. Fetching can be deferred until searchResult.getText() or getMarkup() are called by passing ``prefetch_results = False`` to the search method.
+Run a Google search and fetch the individual results (full HTML and text contents). By default the result URLs are fetched eagerly when the search request is made with 10 parallel requests. Fetching can be deferred until ``searchResult.getText()`` or ``getMarkup()`` are called by passing ``prefetch_results = False`` to the search method.
 
 Pass ``num_results`` to the search method to set the maximum number of results. 
 
