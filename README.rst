@@ -3,7 +3,7 @@ google-search
 =============
 
 
-.. image:: https://img.shields.io/pypi/v/googlesearch.svg
+.. image:: https://img.shields.io/pypi/v/google-search.svg
         :target: https://pypi.python.org/pypi/google-search
 
 .. image:: https://img.shields.io/travis/anthonyhseb/googlesearch.svg
