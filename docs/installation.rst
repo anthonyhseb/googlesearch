@@ -12,7 +12,7 @@ To install google-search, run this command in your terminal:
 
 .. code-block:: console
 
-    $ pip install googlesearch
+    $ pip install google-search
 
 This is the preferred method to install google-search, as it will always install the most recent stable release. 
 
