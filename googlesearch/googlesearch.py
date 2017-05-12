@@ -15,7 +15,7 @@ from time import sleep
 class GoogleSearch:
     USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/ 58.0.3029.81 Safari/537.36"
     SEARCH_URL = "https://google.com/search"
-    RESULT_SELECTOR = "h3.r a"
+    RESULT_SELECTOR = ".srg h3.r a"
     TOTAL_SELECTOR = "#resultStats"
     RESULTS_PER_PAGE = 10
     DEFAULT_HEADERS = [
@@ -23,7 +23,7 @@ class GoogleSearch:
             ("Accept-Language", "en-US,en;q=0.5"),
         ]
     
-    def search(self, query, num_results = 10, prefetch_pages = True, prefetch_threads = 10):
+    def search(self, query, num_results = 10, prefetch_pages = True, prefetch_threads = 10, language = "en"):
         searchResults = []
         pages = int(math.ceil(num_results / float(GoogleSearch.RESULTS_PER_PAGE)));
         fetcher_threads = deque([])
@@ -32,12 +32,12 @@ class GoogleSearch:
             start = i * GoogleSearch.RESULTS_PER_PAGE
             opener = urllib2.build_opener()
             opener.addheaders = GoogleSearch.DEFAULT_HEADERS
-            response = opener.open(GoogleSearch.SEARCH_URL + "?q="+ urllib2.quote(query) + ("" if start == 0 else ("&start=" + str(start))))
+            response = opener.open(GoogleSearch.SEARCH_URL + "?q="+ urllib2.quote(query) + "&hl=" + language + ("" if start == 0 else ("&start=" + str(start))))
             soup = BeautifulSoup(response.read(), "lxml")
             response.close()
             if total is None:
                 totalText = soup.select(GoogleSearch.TOTAL_SELECTOR)[0].children.next().encode('utf-8')
-                total = long(re.sub("[', ]", "", re.search("(([0-9]+[', ])*[0-9]+)", totalText).group(1)))
+                total = long(re.sub("[',\. ]", "", re.search("(([0-9]+[',\. ])*[0-9]+)", totalText).group(1)))
             results = self.parseResults(soup.select(GoogleSearch.RESULT_SELECTOR))
             if len(searchResults) + len(results) > num_results:
                 del results[num_results - len(searchResults):]
