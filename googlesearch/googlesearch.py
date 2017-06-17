@@ -3,7 +3,6 @@ Created on May 5, 2017
 
 @author: anthony
 '''
-import urllib2
 import math
 import re
 from bs4 import BeautifulSoup
@@ -11,7 +10,13 @@ from pprint import pprint
 from threading import Thread
 from collections import deque
 from time import sleep
-        
+
+import sys
+if sys.version[0] == '2':
+    import urllib2
+else:
+    import urllib.request as urllib2
+
 class GoogleSearch:
     USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/ 58.0.3029.81 Safari/537.36"
     SEARCH_URL = "https://google.com/search"
@@ -36,8 +41,10 @@ class GoogleSearch:
             soup = BeautifulSoup(response.read(), "lxml")
             response.close()
             if total is None:
-                totalText = soup.select(GoogleSearch.TOTAL_SELECTOR)[0].children.next().encode('utf-8')
-                total = long(re.sub("[', ]", "", re.search("(([0-9]+[', ])*[0-9]+)", totalText).group(1)))
+                ch1 = soup.select(GoogleSearch.TOTAL_SELECTOR)[0].children
+                totalText = soup.select(GoogleSearch.TOTAL_SELECTOR)[0].children.__next__().encode('utf-8')
+                r1 = re.search(b"(([0-9]+[',\. ])*[0-9]+)", totalText)
+                total = int(re.sub(b"[',\. ]", b"", r1.group(1)))
             results = self.parseResults(soup.select(GoogleSearch.RESULT_SELECTOR))
             if len(searchResults) + len(results) > num_results:
                 del results[num_results - len(searchResults):]
