@@ -21,7 +21,7 @@ class GoogleSearch:
     RESULTS_PER_PAGE = 10
     DEFAULT_HEADERS = [
             ('User-Agent', USER_AGENT),
-            ("Accept-Language", "ko-KR,en;q=0.5"),
+            ("Accept-Language", "en-US,en;q=0.5"),
         ]
     
     def search(self, query, num_results = 10, prefetch_pages = True, prefetch_threads = 10):
