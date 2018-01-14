@@ -3,7 +3,8 @@ Created on May 5, 2017
 
 @author: anthony
 '''
-import urllib2
+import urllib.request
+#import urllib2
 import math
 import re
 from bs4 import BeautifulSoup
@@ -20,7 +21,7 @@ class GoogleSearch:
     RESULTS_PER_PAGE = 10
     DEFAULT_HEADERS = [
             ('User-Agent', USER_AGENT),
-            ("Accept-Language", "en-US,en;q=0.5"),
+            ("Accept-Language", "ko-KR,en;q=0.5"),
         ]
     
     def search(self, query, num_results = 10, prefetch_pages = True, prefetch_threads = 10):
@@ -30,14 +31,18 @@ class GoogleSearch:
         total = None;
         for i in range(pages) :
             start = i * GoogleSearch.RESULTS_PER_PAGE
-            opener = urllib2.build_opener()
+            #opener = urllib2.build_opener()
+            opener = urllib.request.build_opener()
             opener.addheaders = GoogleSearch.DEFAULT_HEADERS
-            response = opener.open(GoogleSearch.SEARCH_URL + "?q="+ urllib2.quote(query) + ("" if start == 0 else ("&start=" + str(start))))
+            #response = opener.open(GoogleSearch.SEARCH_URL + "?q="+ urllib2.quote(query) + ("" if start == 0 else ("&start=" + str(start))))
+            response = opener.open(GoogleSearch.SEARCH_URL + "?q="+ urllib.request.pathname2url(query) + ("" if start == 0 else ("&start=" + str(start))))
             soup = BeautifulSoup(response.read(), "lxml")
             response.close()
             if total is None:
-                totalText = soup.select(GoogleSearch.TOTAL_SELECTOR)[0].children.next().encode('utf-8')
-                total = long(re.sub("[', ]", "", re.search("(([0-9]+[', ])*[0-9]+)", totalText).group(1)))
+                #totalText = soup.select(GoogleSearch.TOTAL_SELECTOR)[0].children.next().encode('utf-8')
+                totalText = soup.select(GoogleSearch.TOTAL_SELECTOR)[0].children.__next__().encode('utf-8')
+                #total = long(re.sub("[', ]", "", re.search("(([0-9]+[', ])*[0-9]+)", totalText).group(1)))
+                total = int(re.sub(b"[', ]", b"", re.search(b"(([0-9]+[', ])*[0-9]+)", totalText).group(1)))
             results = self.parseResults(soup.select(GoogleSearch.RESULT_SELECTOR))
             if len(searchResults) + len(results) > num_results:
                 del results[num_results - len(searchResults):]
@@ -89,7 +94,7 @@ class SearchResult:
     
     def getMarkup(self):
         if self.__markup is None:
-            opener = urllib2.build_opener()
+            opener = urllib.request.build_opener()
             opener.addheaders = GoogleSearch.DEFAULT_HEADERS
             response = opener.open(self.url);
             self.__markup = response.read()
@@ -98,7 +103,9 @@ class SearchResult:
     def __str__(self):
         return  str(self.__dict__)
     def __unicode__(self):
-        return unicode(self.__str__())
+        #return unicode(self.__str__())
+        unicode = self.__str__()
+        return unicode
     def __repr__(self):
         return self.__str__()
 
