@@ -37,3 +37,4 @@ Fork notes
 ---------
 
 Compatibility version for Python 3 and 2
+Please don't run setup.py yet. Haven't updated it yet. If you want, you may fork from here or from the main-branch
