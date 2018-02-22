@@ -32,9 +32,3 @@ This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypack
 
 .. _Cookiecutter: https://github.com/audreyr/cookiecutter
 .. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage
-
-Fork notes
----------
-
-Compatibility version for Python 3 and 2
-Please don't run setup.py yet. Haven't updated it yet. If you want, you may fork from here or from the main-branch
