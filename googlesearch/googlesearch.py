@@ -81,7 +81,7 @@ class SearchResult:
     
     def getText(self):
         if self.__text is None:
-            soup = BeautifulSoup(self.getMarkup(), "lxml")
+            soup = BeautifulSoup(self.getMarkup(), "html.parser")
             for junk in soup(["script", "style"]):
                 junk.extract()
                 self.__text = soup.get_text()
