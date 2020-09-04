@@ -3,7 +3,7 @@ Created on May 5, 2017
 
 @author: anthony
 '''
-import urllib
+import urllib.request
 import lib2to3
 import math
 import re
@@ -15,9 +15,10 @@ from time import sleep
         
 class GoogleSearch:
     USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/ 58.0.3029.81 Safari/537.36"
+    # USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36"
     SEARCH_URL = "https://google.com/search"
     RESULT_SELECTOR = "h3.r a"
-    TOTAL_SELECTOR = "#resultStats"
+    TOTAL_SELECTOR = "#result-stats"
     RESULTS_PER_PAGE = 10
     DEFAULT_HEADERS = [
             ('User-Agent', USER_AGENT),
@@ -37,7 +38,7 @@ class GoogleSearch:
             soup = BeautifulSoup(response.read(), "lxml")
             response.close()
             if total is None:
-                totalText = soup.select(GoogleSearch.TOTAL_SELECTOR)[0].children.next().encode('utf-8')
+                totalText = soup.select(GoogleSearch.TOTAL_SELECTOR)[0].children.__next__()
                 total = int(re.sub("[', ]", "", re.search("(([0-9]+[', ])*[0-9]+)", totalText).group(1)))
             results = self.parseResults(soup.select(GoogleSearch.RESULT_SELECTOR))
             if len(searchResults) + len(results) > num_results:
