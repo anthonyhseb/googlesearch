@@ -40,12 +40,12 @@ class GoogleSearch:
             if total is None:
                 totalText = soup.select(GoogleSearch.TOTAL_SELECTOR)[0].children.__next__()
                 total = int(re.sub("[', ]", "", re.search("(([0-9]+[', ])*[0-9]+)", totalText).group(1)))
-            results = self.parseResults(soup.select(GoogleSearch.RESULT_SELECTOR))
-            if len(searchResults) + len(results) > num_results:
-                del results[num_results - len(searchResults):]
-            searchResults += results
+            self.results = self.parseResults(soup.select(GoogleSearch.RESULT_SELECTOR))
+            # if len(searchResults) + len(self.results) > num_results:
+            #     del self.results[num_results - len(searchResults):]
+            searchResults += self.results
             if prefetch_pages:
-                for result in results:
+                for result in self.results:
                     while True:
                         running = 0
                         for thread in fetcher_threads:
