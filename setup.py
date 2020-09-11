@@ -1,7 +1,12 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 
 from setuptools import setup
+#from python_utils import *
+#from util import *
+import sys
+sys.path.append('/home/pacman/Project/illustris_python')
+import util
 
 with open('README.rst') as readme_file:
     readme = readme_file.read()
@@ -15,6 +20,7 @@ requirements = [
 ]
 
 test_requirements = [
+    
 ]
 
 setup(
@@ -41,7 +47,7 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
         "Programming Language :: Python :: 3",
-        #'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 2.7',
     ],
     test_suite='tests',
     tests_require=test_requirements

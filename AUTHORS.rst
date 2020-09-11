@@ -10,4 +10,4 @@ Developer
 Contributors
 ------------
 
-None yet. Why not be the first?
+* Rakesh S R <rakeshsagalagatte@gmail.com>
