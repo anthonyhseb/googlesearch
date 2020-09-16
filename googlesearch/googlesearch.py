@@ -4,7 +4,11 @@ Created on May 5, 2017
 @author: anthony
 '''
 import sys
-import urllib.request as ur
+if int(sys.version.split('.')[0]) > 2:
+    import urllib.request as ur
+else :
+    import urllib2 as ur
+
 import lib2to3
 import math
 import re
@@ -39,7 +43,10 @@ class GoogleSearch:
             soup = BeautifulSoup(response.read(), "lxml")
             response.close()
             if total is None:
-                totalText = soup.select(GoogleSearch.TOTAL_SELECTOR)[0].children.__next__()
+                if int(sys.version.split('.')[0]) > 2:
+                    totalText = soup.select(GoogleSearch.TOTAL_SELECTOR)[0].children.__next__()
+                else :
+                    totalText = soup.select(GoogleSearch.TOTAL_SELECTOR)[0].children.next()
                 total = int(re.sub("[', ]", "", re.search("(([0-9]+[', ])*[0-9]+)", totalText).group(1)))
             self.results = self.parseResults(soup.select(GoogleSearch.RESULT_SELECTOR))
             # if len(searchResults) + len(self.results) > num_results:
