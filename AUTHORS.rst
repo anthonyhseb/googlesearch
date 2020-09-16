@@ -10,4 +10,4 @@ Developer
 Contributors
 ------------
 
-* Rakesh S R <rakeshsagalagatte@gmail.com>
+* Rakesh S R  <rakeshsagalagatte@gmail.com>
