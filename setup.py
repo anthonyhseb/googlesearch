@@ -4,9 +4,6 @@
 from setuptools import setup
 #from python_utils import *
 #from util import *
-import sys
-sys.path.append('/home/pacman/Project/illustris_python')
-import util
 
 with open('README.rst') as readme_file:
     readme = readme_file.read()
