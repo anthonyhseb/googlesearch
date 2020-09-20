@@ -5,8 +5,6 @@ Created on May 6, 2017
 '''
 import unittest
 
-import sys
-sys.path.append('/home/pacman/Project/googlesearch')
 from googlesearch.googlesearch import GoogleSearch
 
 class TestGoolgeSearch(unittest.TestCase):
