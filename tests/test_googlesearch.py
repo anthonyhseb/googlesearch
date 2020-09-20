@@ -4,7 +4,6 @@ Created on May 6, 2017
 @author: anthony
 '''
 import unittest
-
 from googlesearch.googlesearch import GoogleSearch
 
 class TestGoolgeSearch(unittest.TestCase):
