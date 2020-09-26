@@ -4,6 +4,8 @@ Created on May 6, 2017
 @author: anthony
 '''
 import unittest
+import sys
+sys.path.append('../googlesearch')
 from googlesearch.googlesearch import GoogleSearch
 
 class TestGoolgeSearch(unittest.TestCase):
