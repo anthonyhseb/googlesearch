@@ -5,5 +5,5 @@ watchdog==0.8.3
 tox==2.3.1
 coverage==4.1
 Sphinx==1.4.8
-cryptography==1.7
+cryptography==3.4.4
 PyYAML==3.11
