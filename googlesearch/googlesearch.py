@@ -21,7 +21,8 @@ class GoogleSearch:
     with open(resource_filename('googlesearch', 'browser_agents.txt'), 'r') as file_handle:
         USER_AGENTS = file_handle.read().splitlines()
     SEARCH_URL = "https://google.com/search"
-    RESULT_SELECTOR = "h3.r a"
+    RESULT_SELECTOR = "div.g"
+    RESULT_SELECTOR_PAGE1 = "div.g>div>div[id][data-ved]"
     TOTAL_SELECTOR = "#result-stats"
     RESULTS_PER_PAGE = 10
     DEFAULT_HEADERS = [
@@ -33,8 +34,7 @@ class GoogleSearch:
                query,
                num_results = 10,
                prefetch_pages = True,
-               qty_prefetch_threads = 10,
-               time_between_threads = 2.5):
+               num_prefetch_threads = 10):
         '''Perform the Google search.
 
         Parameters:
@@ -47,6 +47,9 @@ class GoogleSearch:
         search_results = []
         pages = int(math.ceil(num_results / float(GoogleSearch.RESULTS_PER_PAGE)))
         total = None
+        thread_pool = None
+        if prefetch_pages:
+            thread_pool = ThreadPool(num_prefetch_threads)
         for i in range(pages) :
             start = i * GoogleSearch.RESULTS_PER_PAGE
             opener = urllib.build_opener()
@@ -64,26 +67,30 @@ class GoogleSearch:
                 total = int(re.sub("[', ]", "",
                                    re.search("(([0-9]+[', ])*[0-9]+)",
                                              totalText).group(1)))
-            self.results = self.parse_results(soup.select(GoogleSearch.RESULT_SELECTOR))
+            selector = GoogleSearch.RESULT_SELECTOR_PAGE1 if i == 0 else GoogleSearch.RESULT_SELECTOR
+            self.results = self.parse_results(soup.select(selector), i)
             # if len(search_results) + len(self.results) > num_results:
             #     del self.results[num_results - len(search_results):]
             search_results += self.results
             if prefetch_pages:
-                thread_pool = ThreadPool(qty_prefetch_threads)
-                for r in self.results:
-                    def local_fun():
-                        r.get_text()
-                        sleep(time_between_threads)
-                    thread_pool.apply_async(func=local_fun)
-                thread_pool.close()
-                thread_pool.join()
+                thread_pool.map_async(SearchResult.get_text, self.results)
+        if prefetch_pages:
+            thread_pool.close()
+            thread_pool.join()
         return SearchResponse(search_results, total)
-        
-    def parse_results(self, results):
+
+    def parse_results(self, results, page):
         search_results = []
         for result in results:
-            url = result["href"]
-            title = result.text
+            if page == 0:
+                result = result.parent
+            else:
+                result = result.find("div")
+            h3 = result.find("h3")
+            if h3 is None:
+                continue
+            url = h3.parent["href"]
+            title = h3.text
             search_results.append(SearchResult(title, url))
         return search_results
 
@@ -98,15 +105,15 @@ class SearchResult:
         self.url = url
         self.__text = None
         self.__markup = None
-    
+
     def get_text(self):
         if self.__text is None:
             soup = BeautifulSoup(self.get_markup(), "lxml")
-            for junk in soup(["script", "style"]):
+            for junk in soup(['style', 'script', 'head', 'title', 'meta']):
                 junk.extract()
-                self.__text = soup.get_text()
+            self.__text = soup.get_text()
         return self.__text
-    
+
     def get_markup(self):
         if self.__markup is None:
             opener = urllib.build_opener()
@@ -114,7 +121,7 @@ class SearchResult:
             response = opener.open(self.url)
             self.__markup = response.read()
         return self.__markup
-    
+
     def __str__(self):
         return  str(self.__dict__)
     def __unicode__(self):
@@ -131,9 +138,9 @@ if __name__ == "__main__":
     else:
         query = " ".join(sys.argv[1:])
     search = GoogleSearch()
-    qty = 10
-    print ("Fetching first " + str(qty) + " results for \"" + query + "\"...")
-    response = search.search(query, qty, prefetch_pages=True)
+    num_results = 10
+    print ("Fetching first " + str(num_results) + " results for \"" + query + "\"...")
+    response = search.search(query, num_results, prefetch_pages=True)
     print ("TOTAL: " + str(response.total) + " RESULTS")
     for count, result in enumerate(response.results):
         print("RESULT #" + str (count+1) + ":")
