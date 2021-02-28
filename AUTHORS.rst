@@ -5,9 +5,10 @@ Credits
 Developer
 ---------
 
-* Anthony Hseb <anthony.hseb@hotmail.com>
+* https://github.com/anthonyhseb
 
 Contributors
 ------------
 
-None yet. Why not be the first?
+* https://github.com/rakeshsagalagatte
+* https://github.com/hildogjr
