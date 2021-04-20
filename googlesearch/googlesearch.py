@@ -45,29 +45,29 @@ class GoogleSearch:
             Time between thread executions in second to void IP block.
         '''
         search_results = []
-        pages = int(math.ceil(num_results / float(GoogleSearch.RESULTS_PER_PAGE)))
+        pages = int(math.ceil(num_results / float(self.RESULTS_PER_PAGE)))
         total = None
         thread_pool = None
         if prefetch_pages:
             thread_pool = ThreadPool(num_prefetch_threads)
         for i in range(pages) :
-            start = i * GoogleSearch.RESULTS_PER_PAGE
+            start = i * self.RESULTS_PER_PAGE
             opener = urllib.build_opener()
-            opener.addheaders = GoogleSearch.DEFAULT_HEADERS
-            with closing(opener.open(GoogleSearch.SEARCH_URL +
+            opener.addheaders = self.DEFAULT_HEADERS
+            with closing(opener.open(self.SEARCH_URL +
                              "?hl=en&q="+ urllib.quote(query) +
                              ("" if start == 0 else
                               ("&start=" + str(start))))) as response:
                 soup = BeautifulSoup(response.read(), "lxml")
             if total is None:
                 if sys.version_info[0] > 2:
-                    totalText = soup.select(GoogleSearch.TOTAL_SELECTOR)[0].children.__next__()
+                    totalText = soup.select(self.TOTAL_SELECTOR)[0].children.__next__()
                 else:
-                    totalText = soup.select(GoogleSearch.TOTAL_SELECTOR)[0].children.next()
+                    totalText = soup.select(self.TOTAL_SELECTOR)[0].children.next()
                 total = int(re.sub("[', ]", "",
                                    re.search("(([0-9]+[', ])*[0-9]+)",
                                              totalText).group(1)))
-            selector = GoogleSearch.RESULT_SELECTOR_PAGE1 if i == 0 else GoogleSearch.RESULT_SELECTOR
+            selector = self.RESULT_SELECTOR_PAGE1 if i == 0 else self.RESULT_SELECTOR
             self.results = self.parse_results(soup.select(selector), i)
             # if len(search_results) + len(self.results) > num_results:
             #     del self.results[num_results - len(search_results):]
