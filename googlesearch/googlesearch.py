@@ -17,6 +17,41 @@ from time import sleep
 from pkg_resources import resource_filename
 from contextlib import closing
 
+
+class SearchResult:
+
+    def __init__(self, title, url):
+        self.title = title
+        self.url = url
+        self.__text = None
+        self.__markup = None
+
+    def get_text(self):
+        if self.__text is None:
+            soup = BeautifulSoup(self.get_markup(), "lxml")
+            for junk in soup(['style', 'script', 'head', 'title', 'meta']):
+                junk.extract()
+            self.__text = soup.get_text()
+        return self.__text
+
+    def get_markup(self):
+        if self.__markup is None:
+            opener = urllib.build_opener()
+            opener.addheaders = GoogleSearch.DEFAULT_HEADERS
+            response = opener.open(self.url)
+            self.__markup = response.read()
+        return self.__markup
+
+    def __str__(self):
+        return  str(self.__dict__)
+
+    def __unicode__(self):
+        return str(self.__str__())
+
+    def __repr__(self):
+        return self.__str__()
+
+
 class GoogleSearch:
     with open(resource_filename('googlesearch', 'browser_agents.txt'), 'r') as file_handle:
         USER_AGENTS = file_handle.read().splitlines()
@@ -29,6 +64,7 @@ class GoogleSearch:
             ('User-Agent', choice(USER_AGENTS)),
             ("Accept-Language", "en-US,en;q=0.5"),
         ]
+    SEARCH_RESULT_MODEL = SearchResult
 
     def search(self,
                query,
@@ -73,7 +109,7 @@ class GoogleSearch:
             #     del self.results[num_results - len(search_results):]
             search_results += self.results
             if prefetch_pages:
-                thread_pool.map_async(SearchResult.get_text, self.results)
+                thread_pool.map_async(self.SEARCH_RESULT_MODEL.get_text, self.results)
         if prefetch_pages:
             thread_pool.close()
             thread_pool.join()
@@ -91,43 +127,14 @@ class GoogleSearch:
                 continue
             url = h3.parent["href"]
             title = h3.text
-            search_results.append(SearchResult(title, url))
+            search_results.append(self.SEARCH_RESULT_MODEL(title, url))
         return search_results
+
 
 class SearchResponse:
     def __init__(self, results, total):
         self.results = results
         self.total = total
-
-class SearchResult:
-    def __init__(self, title, url):
-        self.title = title
-        self.url = url
-        self.__text = None
-        self.__markup = None
-
-    def get_text(self):
-        if self.__text is None:
-            soup = BeautifulSoup(self.get_markup(), "lxml")
-            for junk in soup(['style', 'script', 'head', 'title', 'meta']):
-                junk.extract()
-            self.__text = soup.get_text()
-        return self.__text
-
-    def get_markup(self):
-        if self.__markup is None:
-            opener = urllib.build_opener()
-            opener.addheaders = GoogleSearch.DEFAULT_HEADERS
-            response = opener.open(self.url)
-            self.__markup = response.read()
-        return self.__markup
-
-    def __str__(self):
-        return  str(self.__dict__)
-    def __unicode__(self):
-        return str(self.__str__())
-    def __repr__(self):
-        return self.__str__()
 
 
 # Main entry for test and external script use.
