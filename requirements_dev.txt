@@ -1,6 +1,6 @@
 pip==21.0.1
 bumpversion==0.5.3
-wheel==0.29.0
+wheel==0.41.1
 watchdog==0.8.3
 tox==2.3.1
 coverage==4.1
